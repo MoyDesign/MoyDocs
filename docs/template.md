@@ -1,17 +1,62 @@
+| Prev | Moy.Design Documentation          | Next                        |
+| ---- |:---------------------------------:| --------------------------- |
+| [Parser](parser.md#parser) | [Contents](../README.md#contents) |    |
+---
 
-## Templates
+# Template
 
-Templates show the information extracted by parsers. They're not tightly bound to parsers, but rather represent the collection of new looks to choose from. Different parsers may be used with the same template, and vice versa.
+1. [Overview](#overview)
+1. [Information block](#information-block)
+1. [Template types](#template-types)
+1. [Variables](#variables)
+1. [Examples and contributions](#examples-and-contributions)
 
-The central part of a template is an HTML document with [Handlebars](http://handlebarsjs.com/) tags. You don't need and should not include any Handlebars scripts or compile templates manually. This is all done automatically.
+## Overview
 
-Names you can use in templates are:
+A template is an instruction on how to show the information extracted by parsers. Templates are not tightly bound to parsers, but rather represent the collection of new looks to choose from. Different parsers may be used with the same template, and vice versa.
 
-* BASE_URL - the original URL of the page;
-* TITLE - the content of the `<title>` tag in the original page;
-* ICON_TAGS - the whole `<link rel="icon" ...>` or `<link rel="shortcut icon" ...>` tag(s);
-* OPEN_GRAPH_TAGS - all [Open Graph](http://ogp.me/) metadata tags found in the original document (e.g. `<meta property="og:title" content="Title">`, etc);
-* any name parser provided.
+Internally, template is an HTML document with [Handlebars](http://handlebarsjs.com/) tags. You don't need and should not include any Handlebars scripts or compile templates manually. This is all done automatically.
+
+## Information block
+
+Template must start with the Handlebars comment with the information block:
+
+    {{!--
+    name: Gray low-contrast reader
+    type: article
+    author: Moy.Design
+    description: Minimalistic low-contrast template with gray background.
+      Displays a single blog post in a human-friendly way without needless formatting.
+    --}}
+
+The information block is a YAML text contains the following fields:
+
+1. `name`: string, the template's name. Must be unique and match the parser's file name (without the `.handlebars` suffix).
+1. `description` *(optional)*: string, human-readable template's description.
+1. `author` *(optional)*: either string or object. If it's an object, it must contain the `name` field. Also, authors amy include additional information about themselves via additional fields (such as `email`).
+1. `type`: string, template type. Possible values so far: `article`, `feed`, `custom`. See about types [below](#template-types).
+1. `customType` *(optional)*: string, must be present if the type is `custom` (and must not be present otherwise). See about types [below](#template-types).
+
+## Template types
+
+The plugin uses types to match parsers with templates. For now, the following types are recognized:
+
+1. `article`: a single article or blog post (possibly) with comments.
+1. `feed`: a feed or list of articles or blog posts.
+
+The number will grow in the future.
+
+Parser and template writers can use their own types (via `customType`), if the standard types are not sufficient.
+
+## Variables
+
+Templates can use the following variables (tokens, names):
+
+* `BASE_URL`: the original URL of the page;
+* `TITLE`: the content of the `<title>` tag in the original page;
+* `ICON_TAGS`: the whole `<link rel="icon" ...>` or `<link rel="shortcut icon" ...>` tag(s);
+* `OPEN_GRAPH_TAGS`: all [Open Graph](http://ogp.me/) metadata tags found in the original document (e.g. `<meta property="og:title" content="Title">`, etc);
+* **any name parser provided.**
 
 Parsers provide *HTML strings.* This means if you don't want them to be escaped you need to use triple curly bracers, i.e. `{{{name}}}` instead of `{{name}}`.
 
@@ -34,6 +79,12 @@ For the rules with sub-rules, the `WHOLE` sub-rule is defined for convenience. T
 
 We encourage template creators to always use automatically provided names. This will allow Moy to generate a more polished Web pages. Typical template skeleton may look like this:
 
+    {{!--
+    name: Your template name
+    type: article
+    author: Your name
+    description: Your template description
+    --}}
     <!DOCTYPE html>
     <html>
     <head>
@@ -52,5 +103,14 @@ We encourage template creators to always use automatically provided names. This 
       <!-- document structure -->
     </body>
     </html>
+    
+## Examples and contributions
 
-You can find template examples in the [Templates](/template) page. Remember, that you can read any template's code, just click on its name.
+The plugin loads templates from the [MoyTemplates](https://github.com/MoyDesign/MoyData/tree/master/MoyTemplates) directory of the [MoyData](https://github.com/MoyDesign/MoyData) repository. There you can find a lot of template examples.
+
+**Contributions are welcome!** Feel free to file issues and provide pull requests with template fixes and new templates.
+
+---
+| Prev | Moy.Design Documentation          | Next                        |
+| ---- |:---------------------------------:| --------------------------- |
+| [Parser](parser.md#parser) | [Contents](../README.md#contents) |    |
