@@ -6,10 +6,10 @@ Moy.Design in-depth documentation, which explains how to get the most from the p
 
 ## Contents
 
-1. [Overview](docs/overview.md)
-2. [Browser plugin](docs/plugin.md)
-3. [Parsers](docs/parser.md)
-4. [Templates](docs/template.md)
+1. [Overview](docs/overview.md#overview)
+2. [Browser plugin](docs/plugin.md#browser-plugin)
+3. [Parsers](docs/parser.md#parser)
+4. [Templates](docs/template.md#template)
 
 ## Get help
 
