@@ -2,8 +2,6 @@
 
 Moy.Design in-depth documentation, which explains how to get the most from the plugin and increase the number of supported websites.
 
-> Currently, the docs are slightly out of date (they're for the older version of the plugin, 1.4.0). Soon this will be fixed.
-
 ## Contents
 
 1. [Overview](docs/overview.md#overview)
