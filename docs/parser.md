@@ -15,72 +15,73 @@
 
 ## Overview
 
-A parser is an instruction for the plugin on how to extract information from web pages. It is a [YAML](http://yaml.org/) document of the following format:
+A parser is an instruction for the plugin on how to extract information from web pages. It is a [YAML](http://yaml.org/) document of the following format (this is a synthetic example, a typical parser is much shorter):
 
-    info:
-      name: AdMe article
-      description: Parses a single AdMe.ru article.
-      author: Moy.Design
-      type: article
-      domain: adme.ru
-      path: '/[^/]+/[^/]+.*'
-      testPages: 'https://moy.design/example/lorem-ipsum.html'
+```yaml
+info:
+  name: AdMe article
+  description: Parses a single AdMe.ru article.
+  author: Moy.Design
+  type: article
+  domain: adme.ru
+  path: '/[^/]+/[^/]+.*'
+  testPages: 'https://moy.design/example/lorem-ipsum.html'
 
-    rules:
-        - name: favicon
-          value: "https://moy.design/favicon.ico"
-        
-        - name: global_headline
-          match: .headline
-        
-        - name: post
-          match: article
-          rules:
-              - name: level
-                attribute: class
-                rewrite:
-                  find: 'b-tree-twig-(\d+)'
-                  output: '$1'
-                    
-              - name: author
-                match: .entryunit__author
-                
-              - name: author_link
-                match: 
-                    include: a.entryunit__author__link
-                    attribute: href
-                
-              - name: title
-                match:
-                    include: .entry-title
-                    exclude: .entry-linkbar
-                    outerNode: true
-                    removeInside: .unwanted-class
-                
-              - name: body
-                match: 
-                  include: .entryunit__text
-                  keepBasicMarkup: true
-                
-              - name: another_body
-                match:
-                  include: dt
-                  exclude: .banner
-                  addNextUntil: "dt, .banner"
-              
-              - name: date
-                match: 
-                    or:
-                      - .vcard .updated
-                      - .asset-entry-date .datetime
-                      - .b-singlepost-author-userinfo-screen .b-singlepost-author-date
+rules:
+    - name: favicon
+      value: "https://moy.design/favicon.ico"
 
-    redirect:
-        query:
-            setParams:
-                a: 1
-                b: abcd
+    - name: global_headline
+      match: .headline
 
+    - name: post
+      match: article
+      rules:
+          - name: level
+            attribute: class
+            rewrite:
+              find: 'b-tree-twig-(\d+)'
+              output: '$1'
+
+          - name: author
+            match: .entryunit__author
+
+          - name: author_link
+            match: 
+                include: a.entryunit__author__link
+                attribute: href
+
+          - name: title
+            match:
+                include: .entry-title
+                exclude: .entry-linkbar
+                outerNode: true
+                removeInside: .unwanted-class
+
+          - name: body
+            match: 
+              include: .entryunit__text
+              keepBasicMarkup: true
+
+          - name: another_body
+            match:
+              include: dt
+              exclude: .banner
+              addNextUntil: "dt, .banner"
+
+          - name: date
+            match: 
+                or:
+                  - .vcard .updated
+                  - .asset-entry-date .datetime
+                  - .b-singlepost-author-userinfo-screen .b-singlepost-author-date
+
+redirect:
+    query:
+        setParams:
+            a: 1
+            b: abcd
+```
 ## Information block
 
 A parser **must** contain the `info` block at the top level. Its value is an object with the following keys.
@@ -136,38 +137,38 @@ Optionally, rule definition may contain the `rules` block itself. It works the s
 The `rules` block may be nested multiple times. But be reasonable with the depth. 
 
 We encourage you to write parsers so they return collections of meaningful objects with structure, like the collection of `article`s with fields `title`, `body`, `author`, etc. But sometimes the original markup is not structured. Consider the following example:
-
-    <dl>
-        <dt>Article 1 title</dt>
-        <dd>Article 1 body</dd>
-        <dt>Article 2 title</dt>
-        <dd>Article 2 body</dd>
-        ...
-    </dl>
-
+```html
+<dl>
+    <dt>Article 1 title</dt>
+    <dd>Article 1 body</dd>
+    <dt>Article 2 title</dt>
+    <dd>Article 2 body</dd>
+    ...
+</dl>
+```
 `addNextUntil` helps with parsing such cases. For this example, we could make a parser like this:
-
+```yaml
+rules:
+  - name: article
+    match:
+      include: dt
+      addNextUntil: dt
     rules:
-      - name: article
-        match:
-          include: dt
-          addNextUntil: dt
-        rules:
-          - name: title
-            match: dt
-          - name: body
-            match: dd
-
+      - name: title
+        match: dt
+      - name: body
+        match: dd
+```
 The `article` rule matches all `dt` tags and supplements them with whatever siblings go after them, until the next `dt` tag is found. The subrules then parse titles and bodies from the combined objects.
 
 ### rewrite
 
 `rewrite` is an optional field in the rule definition. It allows to change the parsed content. It's not allowed for rules with subrules (i.e. with a nested `rule` block). 
-
-    rewrite:
-      find: 'b-tree-twig-(\d+)'
-      output: '$1'
-
+```yaml
+rewrite:
+    find: 'b-tree-twig-(\d+)'
+    output: '$1'
+```
 `rewrite` block has one required field (`output`) and one optional (`find`).
 
 1. `find` specifies a regular expression. It may have groups, which can be referenced in `output`. If not specified, it's set to `.*`. The regular expression is applied *only once*. Note, that single quotes is used. In single quotes, `\` is not treated as escape character in Yaml. If we used double quotes (`"`), we'd need to double the slash.
@@ -182,13 +183,13 @@ For example, if a rule parsed a token `something b-tree-twig-8 anything else`, t
 There can also be an (optional) `redirect` top-level block. It allows to modify the original document's URL. If it is present, the plugin will redirect the browser to the modified URL before parsing.
 
 For now, only query parameters modification is supported. You can add/modify query parameters (the stuff which goes after `?`) like this:
-
-    redirect:
-        query:
-            setParams:
-                q: moy
-                show: all
-
+```yaml
+redirect:
+    query:
+        setParams:
+            q: moy
+            show: all
+```
 This tells Moy to add parameters `q` and `show` with values `moy` and `all` respectively. If the original URL contains parameter(s) with the same names, their values will be overwritten. Let's say, the original URL was `https://moy.design/?q=abcd`. The modified URL (to which the user gets redirected) will be `https://moy.design/?q=moy&show=all` (or `https://moy.design/?show=all&q=moy`, the order is not guaranteed).
 
 ## Examples and contributions
