@@ -20,7 +20,7 @@ The plugin's available for Chrome and Firefox (including Firefox for Android).
 
 If everything's OK, you should see something like this next time you click the plugin's icon:
 
-![Plugin pop-up](plugin-popup.png)
+<img src="plugin-popup.png" height="300">
 
 These buttons represent alternative looks (templates) available for this page. For some pages, only `Original look` is available. When you press a button, the page will be reloaded with the chosen look, and your choice is remembered. I.e. next time you load this (or similar) page, it'll be shown with the selected template.
 
