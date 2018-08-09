@@ -2,6 +2,7 @@
 | Prev | Moy.Design Documentation          | Next                        |
 | ---- |:---------------------------------:| --------------------------- |
 |      | [Contents](../README.md#contents) | [Browser plugin](plugin.md#browser-plugin) |
+---
 
 # Overview
 
@@ -24,7 +25,7 @@ Then, the plugin renders the template with the parsed data. The result of this o
 Finally, the plugin substitutes the original HTML page with the new one. So, you see the website in your own way.
 
 > Parsers and templates are separate entities. They don't depend on each other. They may (and should) be written and used separately. For instance, you can use one template with many parsers.
-
+---
 | Prev | Moy.Design Documentation          | Next                        |
 | ---- |:---------------------------------:| --------------------------- |
 |      | [Contents](../README.md#contents) | [Browser plugin](plugin.md#browser-plugin) |
