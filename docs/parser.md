@@ -17,6 +17,9 @@
 
 A parser is an instruction for the plugin on how to extract information from web pages. It is a [YAML](http://yaml.org/) document of the following format (this is a synthetic example, a typical parser is much shorter):
 
+<details><summary>Show example</summary>
+<p>
+    
 ```yaml
 info:
   name: AdMe article
@@ -82,6 +85,10 @@ redirect:
             a: 1
             b: abcd
 ```
+
+</p>
+</details>
+
 ## Information block
 
 A parser **must** contain the `info` block at the top level. Its value is an object with the following keys.
