@@ -1,13 +1,30 @@
 
-## Parsers
+| Prev | Moy.Design Documentation          | Next                        |
+| ---- |:---------------------------------:| --------------------------- |
+| [Browser plugin](plugin.md#browser-plugin) | [Contents](../README.md#contents) | [Template](template.md#template) |
+---
+# Parser
 
-Parsers extract information from web pages. The central part of a parser is its set of rules. It is a [YAML](http://yaml.org/) document of the following format:
+1. [Overview](#overview)
+1. [Information block](#information-block)
+1. [Parser types](#parser-types)
+1. [Rules block](#rules-block)
+    1. [rewrite](#rewrite)
+1. [Redirect block](#redirect-block)
+1. [Examples and contributions](#examples-and-contributions)
 
-    redirect:
-        query:
-            setParams:
-                a: 1
-                b: abcd
+## Overview
+
+A parser is an instruction for the plugin on how to extract information from web pages. It is a [YAML](http://yaml.org/) document of the following format:
+
+    info:
+      name: AdMe article
+      description: Parses a single AdMe.ru article.
+      author: Moy.Design
+      type: article
+      domain: adme.ru
+      path: '/[^/]+/[^/]+.*'
+      testPages: 'https://moy.design/example/lorem-ipsum.html'
 
     rules:
         - name: favicon
@@ -58,9 +75,40 @@ Parsers extract information from web pages. The central part of a parser is its 
                       - .asset-entry-date .datetime
                       - .b-singlepost-author-userinfo-screen .b-singlepost-author-date
 
-### rules block
+    redirect:
+        query:
+            setParams:
+                a: 1
+                b: abcd
 
-It must contain the `rules` block at the top level. It's value must be a list of rule definitions.
+## Information block
+
+A parser **must** contain the `info` block at the top level. Its value is an object with the following keys.
+
+1. `name`: string, the parser's name. Must be unique and match the parser's file name (without the `.yaml` suffix).
+1. `description` *(optional)*: string, human-readable parsers description.
+1. `author` *(optional)*: either string or object. If it's an object, it must contain the `name` field. Also, authors amy include additional information about themselves via additional fields (such as `email`).
+1. `type`: string, parser type. Possible values so far: `article`, `feed`, `custom`. See about types [below](#parser-types).
+1. `customType` *(optional)*: string, must be present if the type is `custom` (and must not be present otherwise). See about types [below](#parser-types).
+1. `domain`: string, the name of the domain the parsers works with. Without prefixes like `http://` and suffixes.
+1. `path` *(optional)*: string, regular expression used to determine if the page's URL's path (everything which goes *after* the domain) matches the given parser, i.e. if the parser can be used to parse this page. Either `path` or `suggestedRegex` (see below) must be given. If `path` is given instead of `suggestedRegex` the plugin will generate the full page regex automatically.
+1. `suggestedRegex` *(optional)*: string, regular expression used to determine if the page's full URL (with prefixes like `http://`, domain, hashes and everything else) matches the given parser, i.e. if the parser can be used to parse this page. Either `path` or `suggestedRegex` must be given.
+1. `testPages` *(optional)*: string or array of strings, full URL(s) of page(s) this parser can be tested on.
+
+## Parser types
+
+The plugin uses types to match parsers with templates. For now, the following types are recognized:
+
+1. `article`: a single article or blog post (possibly) with comments.
+1. `feed`: a feed or list of articles or blog posts.
+
+The number will grow in the future.
+
+Parser and template writers can use their own types (via `customType`), if the standard types are not sufficient.
+
+## Rules block
+
+A parser **must** contain the `rules` block at the top level. Its value must be a list of rule definitions.
 
 A rule definition is an object with two must-have fields: `name` and one of `match`, `value` or `attribute`. There can also be an optional `rewrite` field (see below).
 
@@ -112,7 +160,7 @@ We encourage you to write parsers so they return collections of meaningful objec
 
 The `article` rule matches all `dt` tags and supplements them with whatever siblings go after them, until the next `dt` tag is found. The subrules then parse titles and bodies from the combined objects.
 
-#### rewrite
+### rewrite
 
 `rewrite` is an optional field in the rule definition. It allows to change the parsed content. It's not allowed for rules with subrules (i.e. with a nested `rule` block). 
 
@@ -129,7 +177,7 @@ If a `rewrite` block is given for a rule, first the rule parses the source norma
 
 For example, if a rule parsed a token `something b-tree-twig-8 anything else`, the rewrite block above would transform it to just `8`.
 
-### redirect block
+## Redirect block
 
 There can also be an (optional) `redirect` top-level block. It allows to modify the original document's URL. If it is present, the plugin will redirect the browser to the modified URL before parsing.
 
@@ -142,3 +190,14 @@ For now, only query parameters modification is supported. You can add/modify que
                 show: all
 
 This tells Moy to add parameters `q` and `show` with values `moy` and `all` respectively. If the original URL contains parameter(s) with the same names, their values will be overwritten. Let's say, the original URL was `https://moy.design/?q=abcd`. The modified URL (to which the user gets redirected) will be `https://moy.design/?q=moy&show=all` (or `https://moy.design/?show=all&q=moy`, the order is not guaranteed).
+
+## Examples and contributions
+
+The plugin loads parsers from the [MoyParsers](https://github.com/MoyDesign/MoyData/tree/master/MoyParsers) directory of the [MoyData](https://github.com/MoyDesign/MoyData) repository. There you can find a lot of parser examples.
+
+**Contributions are welcome!** Feel free to file issues and provide pull requests with parser fixes and new parsers.
+
+---
+| Prev | Moy.Design Documentation          | Next                        |
+| ---- |:---------------------------------:| --------------------------- |
+| [Browser plugin](plugin.md#browser-plugin) | [Contents](../README.md#contents) | [Template](template.md#template) |
