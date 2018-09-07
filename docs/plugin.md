@@ -13,10 +13,7 @@
 
 Websites data is never sent anywhere. **Parsing and templating are done on the client (in your browser).** This means you can use Moy even for websites with sensitive data. This also means you need to install a browser plugin.
 
-The plugin's available for Chrome and Firefox (including Firefox for Android).
-
-* [Install for Chrome](https://chrome.google.com/webstore/detail/moydesign/kgepfphemgiidklhpnfoobmoieiglgon)
-* [Install for Firefox](https://moy.design/extension/firefox)
+The plugin's available for Chrome and Firefox (including Firefox for Android). Please, visit the [Moy.Design website](https://moy.design/) to install it.
 
 If everything's OK, you should see something like this next time you click the plugin's icon:
 
